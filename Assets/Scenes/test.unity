@@ -1548,7 +1548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   duckCall: {fileID: 8300000, guid: 4f3c49a0c63bfa84fa71cd31f599bf33, type: 3}
-  quackQuack: {fileID: 8300000, guid: 9af3fc91bd8a174458428e43dc4efca4, type: 3}
+  quackQuack: {fileID: 8300000, guid: 1ba2dcdb7d886754daaf1b829651d51d, type: 3}
   minBoundary: {x: -5, y: -5}
   maxBoundary: {x: 5, y: 5}
 --- !u!82 &1561049304
