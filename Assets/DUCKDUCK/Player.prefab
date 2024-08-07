@@ -121,7 +121,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -6.0079575}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 10.639999, z: 0, w: 13.83}
     pivot: {x: 0.5, y: 0.5}
@@ -197,7 +197,7 @@ MonoBehaviour:
   moveSpeed: 5
   duckCall: {fileID: 8300000, guid: 4f3c49a0c63bfa84fa71cd31f599bf33, type: 3}
   quackQuack: {fileID: 8300000, guid: 1ba2dcdb7d886754daaf1b829651d51d, type: 3}
-  minBoundary: {x: -10, y: -10}
+  minBoundary: {x: -10, y: -13.565}
   maxBoundary: {x: 10, y: 10}
   duckPrefab: {fileID: 0}
   parentTransform: {fileID: 0}
