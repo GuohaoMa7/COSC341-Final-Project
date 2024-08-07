@@ -13,16 +13,16 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     public GameObject duckPrefab;
     public Transform parentTransform;
     [SerializeField] private float jumpForce = 6f;
-    private int maxDucks = 4; // Maximum number of ducks allowed
+    private int maxDucks = 100; // Maximum number of ducks allowed
 
     private Animator animator;
     private AudioSource audioSource;
     private Rigidbody2D rb;
-    private bool isSleeping = false;
+    public bool isSleeping = false;
     public bool isDragging = false;
     public bool isJumping;
     public bool isManagingDucks;
-    private List<GameObject> ducks = new List<GameObject>();
+    public List<GameObject> ducks = new List<GameObject>();
 
     private void Start()
     {
