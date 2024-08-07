@@ -12,7 +12,7 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     public Vector2 maxBoundary = new Vector2(1600, 900);
     public GameObject duckPrefab;
     public Transform parentTransform;
-    [SerializeField] private float jumpForce = 6f;
+    [SerializeField] private float jumpForce = 60f;
     private int maxDucks = 100; // Maximum number of ducks allowed
 
     private Animator animator;

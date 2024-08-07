@@ -456,11 +456,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2607108831939998604, guid: d2baccc22104e694db501fa20041716c, type: 3}
       propertyPath: m_Mass
-      value: 77.44
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2607108831939998604, guid: d2baccc22104e694db501fa20041716c, type: 3}
       propertyPath: m_UseAutoMass
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3679323302228033218, guid: d2baccc22104e694db501fa20041716c, type: 3}
       propertyPath: m_LocalPosition.x
