@@ -167,7 +167,6 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
 
     private Vector2 GetRandomPosition()
     {
-        // Adjust this to your scene setup
         return new Vector2(Random.Range(minBoundary.x, maxBoundary.x), Random.Range(minBoundary.y, maxBoundary.y));
     }
 
@@ -204,7 +203,7 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
             }
             else
             {
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(5f);
             }
         }
     }
@@ -220,7 +219,41 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
             }
         }
     }
+    private void SitDown()
+    {
+        if (Time.time - lastSitDownTime >= sitCooldown)
+        {
+            isSitting = true;
+            sitTimer = Random.Range(15, 20);
+            animator.SetTrigger("SitDown");
+            lastSitDownTime = Time.time;
+            Debug.Log("Sitting down. SitTimer: " + sitTimer);
+        }
+    }
 
+    private void StandUp()
+    {
+        isSitting = false;
+        animator.SetTrigger("SitUp");
+        rb.velocity = Vector2.zero;
+        rb.isKinematic = false;
+        Debug.Log("Standing up.");
+    }
+
+
+
+    // Methods called by Animation Events
+    public void OnSitDownComplete()
+    {
+        animator.SetTrigger("SitDownComplete");
+    }
+
+    public void OnSitUpComplete()
+    {
+        animator.SetTrigger("SitUpComplete");
+    }
+
+    
     private Vector2 ClampPosition(Vector2 position)
     {
         float clampedX = Mathf.Clamp(position.x, minBoundary.x, maxBoundary.x);
