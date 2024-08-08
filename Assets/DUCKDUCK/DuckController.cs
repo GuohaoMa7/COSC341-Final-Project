@@ -18,11 +18,11 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     private Animator animator;
     private AudioSource audioSource;
     private Rigidbody2D rb;
-    public bool isSleeping = false;
-    public bool isDragging = false;
-    public bool isJumping;
-    public bool isManagingDucks;
-    public List<GameObject> ducks = new List<GameObject>();
+    private bool isSleeping = false;
+    private bool isDragging = false;
+    private bool isJumping = false;
+    private bool isManagingDucks = false;
+    private List<GameObject> ducks = new List<GameObject>();
 
     private void Start()
     {
@@ -35,11 +35,10 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
             Debug.LogError("AudioSource component is missing.");
         }
 
-        // Ensure the Rigidbody2D component is configured
         rb.gravityScale = 1f; // Adjust this value to control the falling speed
         rb.mass = 1f; // Adjust the mass as needed
 
-        StartCoroutine(RandomMovement());
+        StartCoroutine(RandomMovementRoutine());
         StartCoroutine(DuckCallRoutine());
     }
 
@@ -50,36 +49,13 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
 
     private void HandleInput()
     {
-        // Check for sleep input
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            ToggleSleep();
-        }
-
-        // Check for jump input
-        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
-        {
-            isJumping = true;
-            StartCoroutine(Jump());
-        }
-
-        // Check for duck management mode toggle
-        if (Input.GetKeyDown(KeyCode.Equals))
-        {
-            ToggleDuckManagement();
-        }
-
-        // Check for adding/removing ducks
+        if (Input.GetKeyDown(KeyCode.S)) ToggleSleep();
+        if (Input.GetKeyDown(KeyCode.Space) && !isJumping) StartCoroutine(JumpRoutine());
+        if (Input.GetKeyDown(KeyCode.Equals)) ToggleDuckManagement();
         if (isManagingDucks)
         {
-            if ((Input.GetKeyDown(KeyCode.Plus) || Input.GetKeyDown(KeyCode.KeypadPlus)) && ducks.Count < maxDucks)
-            {
-                AddDuck();
-            }
-            else if (Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
-            {
-                RemoveDuck();
-            }
+            if (Input.GetKeyDown(KeyCode.Plus) || Input.GetKeyDown(KeyCode.KeypadPlus)) AddDuck();
+            else if (Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus)) RemoveDuck();
         }
     }
 
@@ -101,8 +77,6 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         {
             audioSource.PlayOneShot(quackQuack);
         }
-
-        // Disable gravity while dragging
         rb.gravityScale = 0;
     }
 
@@ -111,9 +85,7 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         if (isDragging)
         {
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(eventData.position);
-            Vector2 clampedPosition = ClampPosition(mousePosition);
-            transform.position = clampedPosition;
-
+            transform.position = ClampPosition(mousePosition);
             animator.SetFloat("MoveX", Mathf.Abs(mousePosition.x - transform.position.x));
             animator.SetBool("IsWalking", true);
         }
@@ -123,22 +95,15 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     {
         isDragging = false;
         animator.SetBool("IsWalking", false);
-
-        // Re-enable gravity when dragging stops
         rb.gravityScale = 1f;
     }
 
-    private IEnumerator Jump()
+    private IEnumerator JumpRoutine()
     {
         animator.SetTrigger("Jump");
         isJumping = true;
-
-        // Adding upward force for the jump
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-
-        // Assuming the jump animation takes 1 second
-        yield return new WaitForSeconds(1f);
-
+        yield return new WaitForSeconds(1f); // Adjust this value based on your animation duration
         isJumping = false;
     }
 
@@ -146,7 +111,6 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     {
         if (ducks.Count >= maxDucks)
         {
-            // Log a message to indicate that no more ducks can be added
             Debug.Log("Maximum number of ducks reached. Cannot add more.");
             return;
         }
@@ -170,42 +134,43 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         return new Vector2(Random.Range(minBoundary.x, maxBoundary.x), Random.Range(minBoundary.y, maxBoundary.y));
     }
 
-    private IEnumerator RandomMovement()
+    private IEnumerator RandomMovementRoutine()
     {
         while (true)
         {
             if (!isSleeping && !isDragging)
             {
-                float horizontal = Random.Range(-1f, 1f);
-
-                Vector2 direction = new Vector2(horizontal, 0).normalized;
-
-                float moveDuration = Random.Range(1f, 3f);
-                float moveTime = 0f;
-
-                while (moveTime < moveDuration)
-                {
-                    Vector2 newPosition = (Vector2)transform.position + direction * moveSpeed * Time.deltaTime;
-                    transform.position = ClampPosition(newPosition);
-
-                    animator.SetFloat("MoveX", Mathf.Abs(direction.x));
-                    animator.SetBool("IsWalking", true);
-
-                    moveTime += Time.deltaTime;
-                    yield return null;
-                }
-
-                animator.SetFloat("MoveX", 0);
-                animator.SetBool("IsWalking", false);
-
-                float stopDuration = Random.Range(1f, 3f);
-                yield return new WaitForSeconds(stopDuration);
+                yield return StartCoroutine(MoveRandomly());
             }
             else
             {
                 yield return new WaitForSeconds(5f);
             }
         }
+    }
+
+    private IEnumerator MoveRandomly()
+    {
+        float horizontal = Random.Range(-1f, 1f);
+        Vector2 direction = new Vector2(horizontal, 0).normalized;
+        float moveDuration = Random.Range(1f, 3f);
+        float moveTime = 0f;
+
+        while (moveTime < moveDuration)
+        {
+            transform.position += (Vector3)direction * moveSpeed * Time.deltaTime;
+            transform.position = ClampPosition(transform.position);
+            animator.SetFloat("MoveX", Mathf.Abs(direction.x));
+            animator.SetBool("IsWalking", true);
+
+            moveTime += Time.deltaTime;
+            yield return null;
+        }
+
+        animator.SetFloat("MoveX", 0);
+        animator.SetBool("IsWalking", false);
+
+        yield return new WaitForSeconds(Random.Range(1f, 3f));
     }
 
     private IEnumerator DuckCallRoutine()
@@ -219,41 +184,7 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
             }
         }
     }
-    private void SitDown()
-    {
-        if (Time.time - lastSitDownTime >= sitCooldown)
-        {
-            isSitting = true;
-            sitTimer = Random.Range(15, 20);
-            animator.SetTrigger("SitDown");
-            lastSitDownTime = Time.time;
-            Debug.Log("Sitting down. SitTimer: " + sitTimer);
-        }
-    }
 
-    private void StandUp()
-    {
-        isSitting = false;
-        animator.SetTrigger("SitUp");
-        rb.velocity = Vector2.zero;
-        rb.isKinematic = false;
-        Debug.Log("Standing up.");
-    }
-
-
-
-    // Methods called by Animation Events
-    public void OnSitDownComplete()
-    {
-        animator.SetTrigger("SitDownComplete");
-    }
-
-    public void OnSitUpComplete()
-    {
-        animator.SetTrigger("SitUpComplete");
-    }
-
-    
     private Vector2 ClampPosition(Vector2 position)
     {
         float clampedX = Mathf.Clamp(position.x, minBoundary.x, maxBoundary.x);
@@ -261,4 +192,3 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         return new Vector2(clampedX, clampedY);
     }
 }
-
