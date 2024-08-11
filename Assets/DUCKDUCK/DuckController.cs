@@ -18,7 +18,7 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     private Animator animator;
     private AudioSource audioSource;
     private Rigidbody2D rb;
-    public bool isSleeping = false;
+    public bool IsSitting = false; // Added IsSitting boolean
     public bool isDragging = false;
     public bool isJumping;
     public bool isManagingDucks;
@@ -50,14 +50,20 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
 
     private void HandleInput()
     {
-        // Check for sleep input
-        if (Input.GetKeyDown(KeyCode.S))
+        // Check for sit input
+        if (Input.GetKeyDown(KeyCode.S) && !IsSitting)
         {
-            ToggleSleep();
+            SitDown();
+        }
+
+        // Check for stand up input
+        if (Input.GetKeyDown(KeyCode.W) && IsSitting)
+        {
+            StandUp();
         }
 
         // Check for jump input
-        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
+        if (Input.GetKeyDown(KeyCode.Space) && !isJumping && !IsSitting)
         {
             isJumping = true;
             StartCoroutine(Jump());
@@ -83,11 +89,26 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         }
     }
 
-    private void ToggleSleep()
+private void SitDown()
+{
+    if (!IsSitting) // Ensure this action only happens once
     {
-        isSleeping = !isSleeping;
-        animator.SetBool("IsSleeping", isSleeping);
+        IsSitting = true;
+        animator.SetBool("IsSitting", IsSitting); // Set the sitting animation
+        rb.velocity = Vector2.zero; // Stop all movement
+        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation; // Freeze x-axis movement
     }
+}
+
+
+    private void StandUp()
+    {
+        IsSitting = false;
+        animator.SetBool("IsSitting", IsSitting);
+        animator.SetTrigger("StandUp"); // Optionally trigger a stand-up animation
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation; // Unfreeze x-axis movement
+    }
+
 
     private void ToggleDuckManagement()
     {
@@ -96,19 +117,22 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        isDragging = true;
-        if (quackQuack != null && audioSource != null)
+        if (!IsSitting)
         {
-            audioSource.PlayOneShot(quackQuack);
-        }
+            isDragging = true;
+            if (quackQuack != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(quackQuack);
+            }
 
-        // Disable gravity while dragging
-        rb.gravityScale = 0;
+            // Disable gravity while dragging
+            rb.gravityScale = 0;
+        }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (isDragging)
+        if (isDragging && !IsSitting)
         {
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(eventData.position);
             Vector2 clampedPosition = ClampPosition(mousePosition);
@@ -175,7 +199,7 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     {
         while (true)
         {
-            if (!isSleeping && !isDragging)
+            if (!IsSitting && !isDragging)
             {
                 float horizontal = Random.Range(-1f, 1f);
 
@@ -214,7 +238,7 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         while (true)
         {
             yield return new WaitForSeconds(30f);
-            if (!isSleeping && !isDragging && duckCall != null && audioSource != null)
+            if (!IsSitting && !isDragging && duckCall != null && audioSource != null)
             {
                 audioSource.PlayOneShot(duckCall);
             }
@@ -228,4 +252,3 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         return new Vector2(clampedX, clampedY);
     }
 }
-
