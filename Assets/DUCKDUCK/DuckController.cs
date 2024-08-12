@@ -196,7 +196,9 @@ private void SitDown()
         isJumping = false;
     }
 
-    private void AddDuck()
+private void AddDuck()
+{
+    if (isManagingDucks) // Only allow adding ducks if duck management is active
     {
         if (ducks.Count >= maxDucks)
         {
@@ -208,6 +210,8 @@ private void SitDown()
         GameObject newDuck = Instantiate(duckPrefab, GetRandomPosition(), Quaternion.identity, parentTransform);
         ducks.Add(newDuck);
     }
+}
+
 
     private void RemoveDuck()
     {
