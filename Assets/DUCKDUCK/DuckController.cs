@@ -1,7 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Windows.Speech;
+using System.Linq;
+
+
 
 public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
@@ -12,17 +17,21 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     public Vector2 maxBoundary = new Vector2(1600, 900);
     public GameObject duckPrefab;
     public Transform parentTransform;
-    [SerializeField] private float jumpForce = 60f;
-    private int maxDucks = 100; // Maximum number of ducks allowed
+    [SerializeField] private float jumpForce = 60f; 
+    private int maxDucks = 100; 
 
     private Animator animator;
     private AudioSource audioSource;
     private Rigidbody2D rb;
-    public bool IsSitting = false; // Added IsSitting boolean
+    public bool IsSitting = false; 
     public bool isDragging = false;
     public bool isJumping;
-    public bool isManagingDucks;
+    public bool isManagingDucks = true;
     public List<GameObject> ducks = new List<GameObject>();
+
+    private PhraseRecognizer phraseRecognizer;
+    private Dictionary<string, Action> commands;
+
 
     private void Start()
     {
@@ -41,6 +50,20 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
 
         StartCoroutine(RandomMovement());
         StartCoroutine(DuckCallRoutine());
+
+        commands = new Dictionary<string, Action>
+        {
+            { "sit", SitDown },
+            { "stand", StandUp },
+            { "jump", () => StartCoroutine(Jump()) },
+            { "management", ToggleDuckManagement },
+            { "add", AddDuck },
+            { "remove", RemoveDuck }
+        };
+
+        phraseRecognizer = new KeywordRecognizer(commands.Keys.ToArray());
+        phraseRecognizer.OnPhraseRecognized += OnPhraseRecognized;
+        phraseRecognizer.Start();
     }
 
     private void Update()
@@ -88,6 +111,27 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
             }
         }
     }
+
+    private void OnPhraseRecognized(PhraseRecognizedEventArgs args)
+{
+    Debug.Log($"Recognized phrase: {args.text}");
+    
+    if (commands.ContainsKey(args.text.ToLower()))
+    {
+        commands[args.text.ToLower()].Invoke();
+    }
+}
+private void OnDestroy()
+{
+    if (phraseRecognizer != null && phraseRecognizer.IsRunning)
+    {
+        phraseRecognizer.OnPhraseRecognized -= OnPhraseRecognized;
+        phraseRecognizer.Stop();
+        phraseRecognizer.Dispose();
+    }
+}
+
+
 
 private void SitDown()
 {
@@ -192,7 +236,7 @@ private void SitDown()
     private Vector2 GetRandomPosition()
     {
         // Adjust this to your scene setup
-        return new Vector2(Random.Range(minBoundary.x, maxBoundary.x), Random.Range(minBoundary.y, maxBoundary.y));
+        return new Vector2(UnityEngine.Random.Range(minBoundary.x, maxBoundary.x), UnityEngine.Random.Range(minBoundary.y, maxBoundary.y));
     }
 
     private IEnumerator RandomMovement()
@@ -201,11 +245,11 @@ private void SitDown()
         {
             if (!IsSitting && !isDragging)
             {
-                float horizontal = Random.Range(-1f, 1f);
+                float horizontal = UnityEngine.Random.Range(-1f, 1f);
 
                 Vector2 direction = new Vector2(horizontal, 0).normalized;
 
-                float moveDuration = Random.Range(1f, 3f);
+                float moveDuration = UnityEngine.Random.Range(1f, 3f);
                 float moveTime = 0f;
 
                 while (moveTime < moveDuration)
@@ -223,7 +267,7 @@ private void SitDown()
                 animator.SetFloat("MoveX", 0);
                 animator.SetBool("IsWalking", false);
 
-                float stopDuration = Random.Range(1f, 3f);
+                float stopDuration = UnityEngine.Random.Range(1f, 3f);
                 yield return new WaitForSeconds(stopDuration);
             }
             else
