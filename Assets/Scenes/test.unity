@@ -511,9 +511,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6835528728336453931, guid: d2baccc22104e694db501fa20041716c, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -868639279, guid: 986e627c13abb0f43b6583b1228f5f1c, type: 3}
+    - target: {fileID: 6835528728336453931, guid: d2baccc22104e694db501fa20041716c, type: 3}
       propertyPath: m_Color.a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6835528728336453931, guid: d2baccc22104e694db501fa20041716c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f04fcb409ef8d545910cb39eb7158a5, type: 2}
     - target: {fileID: 6920420369625253751, guid: d2baccc22104e694db501fa20041716c, type: 3}
       propertyPath: duckCall
       value: 
