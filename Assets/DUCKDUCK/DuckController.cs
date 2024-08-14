@@ -16,12 +16,14 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     public GameObject duckPrefab;
     public Transform parentTransform;
     [SerializeField] private float jumpForce = 60f;
-    private int maxDucks = 100; // Maximum number of ducks allowed
+    private int maxDucks = 100; 
+    public float rollSpeed = 20f;
+    public bool isRolling = false;
 
     private Animator animator;
     private AudioSource audioSource;
     private Rigidbody2D rb;
-    public bool IsSitting = false; // Added IsSitting boolean
+    public bool IsSitting = false;
     public bool isDragging = false;
     public bool isJumping;
     public bool isManagingDucks;
@@ -41,9 +43,8 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
             Debug.LogError("AudioSource component is missing.");
         }
 
-        // Ensure the Rigidbody2D component is configured
-        rb.gravityScale = 1f; // Adjust this value to control the falling speed
-        rb.mass = 1f; // Adjust the mass as needed
+        rb.gravityScale = 1f; // falling speed
+        rb.mass = 1f; // mass
 
         StartCoroutine(RandomMovement());
         StartCoroutine(DuckCallRoutine());
@@ -55,7 +56,9 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
             { "jump", () => StartCoroutine(Jump()) },
             { "management", ToggleDuckManagement },
             { "add", AddDuck },
-            { "remove", RemoveDuck }
+            { "remove", RemoveDuck },
+            { "left", () => StartCoroutine(Roll(Vector2.left)) },
+            { "right", () => StartCoroutine(Roll(Vector2.right)) },
         };
 
         phraseRecognizer = new KeywordRecognizer(commands.Keys.ToArray());
@@ -80,6 +83,18 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         if (Input.GetKeyDown(KeyCode.W) && IsSitting)
         {
             StandUp();
+        }
+
+        // Check for roll left
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            StartCoroutine(Roll(Vector2.left));
+        }
+
+        // Check for roll right
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+        StartCoroutine(Roll(Vector2.right));
         }
 
         // Check for jump input
@@ -119,23 +134,35 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         }
     }
 
-private void SitDown()
-{
-    if (!IsSitting) // Ensure this action only happens once
+    public void RollAnimationStart(Vector2 direction)
     {
-        IsSitting = true;
-        animator.SetBool("IsSitting", IsSitting); // Set the sitting animation
-        rb.velocity = Vector2.zero; // Stop all movement
-        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation; // Freeze x-axis movement
+        isRolling = true;
+        StartCoroutine(Roll(direction));
     }
-}
+
+    public void RollAnimationEnd()
+    {
+        isRolling = false;
+    }
+
+
+    private void SitDown()
+    {
+        if (!IsSitting) 
+        {
+            IsSitting = true;
+            animator.SetBool("IsSitting", IsSitting); 
+            rb.velocity = Vector2.zero; // Stop all movement
+            rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation; // Freeze x-axis movement
+        }
+    }
 
 
     private void StandUp()
     {
         IsSitting = false;
         animator.SetBool("IsSitting", IsSitting);
-        animator.SetTrigger("StandUp"); // Optionally trigger a stand-up animation
+        animator.SetTrigger("StandUp");
         rb.constraints = RigidbodyConstraints2D.FreezeRotation; // Unfreeze x-axis movement
     }
 
@@ -190,27 +217,25 @@ private void SitDown()
         // Adding upward force for the jump
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
-        // Assuming the jump animation takes 1 second
         yield return new WaitForSeconds(1f);
 
         isJumping = false;
     }
 
-private void AddDuck()
-{
-    if (isManagingDucks) // Only allow adding ducks if duck management is active
+    private void AddDuck()
     {
-        if (ducks.Count >= maxDucks)
+        if (isManagingDucks)
         {
-            // Log a message to indicate that no more ducks can be added
-            Debug.Log("Maximum number of ducks reached. Cannot add more.");
-            return;
-        }
+            if (ducks.Count >= maxDucks)
+            {
+                Debug.Log("Maximum number of ducks reached. Cannot add more.");
+                return;
+            }
 
-        GameObject newDuck = Instantiate(duckPrefab, GetRandomPosition(), Quaternion.identity, parentTransform);
-        ducks.Add(newDuck);
+            GameObject newDuck = Instantiate(duckPrefab, GetRandomPosition(), Quaternion.identity, parentTransform);
+            ducks.Add(newDuck);
+        }
     }
-}
 
 
     private void RemoveDuck()
@@ -225,7 +250,6 @@ private void AddDuck()
 
     private Vector2 GetRandomPosition()
     {
-        // Adjust this to your scene setup
         return new Vector2(UnityEngine.Random.Range(minBoundary.x, maxBoundary.x), UnityEngine.Random.Range(minBoundary.y, maxBoundary.y));
     }
 
@@ -266,6 +290,31 @@ private void AddDuck()
             }
         }
     }
+
+
+    private IEnumerator Roll(Vector2 direction)
+    {
+        if (isRolling || IsSitting) yield break; 
+
+        isRolling = true;
+        animator.SetBool("Roll", true); 
+
+        float rollDuration = 0.5f; 
+        float moveTime = 0f;
+
+        while (moveTime < rollDuration)
+        {
+            Vector2 newPosition = (Vector2)transform.position + direction * rollSpeed * Time.deltaTime;
+            transform.position = ClampPosition(newPosition);
+
+            moveTime += Time.deltaTime;
+            yield return null;
+        }
+
+        animator.SetBool("Roll", false);
+        isRolling = false;
+    }
+
 
     private IEnumerator DuckCallRoutine()
     {
