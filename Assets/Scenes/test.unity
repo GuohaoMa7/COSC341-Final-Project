@@ -446,21 +446,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 623830978591677838, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: MinDistance
-      value: 3.23354
-      objectReference: {fileID: 0}
     - target: {fileID: 1512146767571641820, guid: d2baccc22104e694db501fa20041716c, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 2607108831939998604, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: m_Mass
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607108831939998604, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: m_UseAutoMass
-      value: 0
+    - target: {fileID: 1512146767571641820, guid: d2baccc22104e694db501fa20041716c, type: 3}
+      propertyPath: m_Layer
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3679323302228033218, guid: d2baccc22104e694db501fa20041716c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -503,53 +495,13 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5156783053894323331, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: m_Offset.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5156783053894323331, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: m_IsTrigger
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835528728336453931, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -868639279, guid: 986e627c13abb0f43b6583b1228f5f1c, type: 3}
-    - target: {fileID: 6835528728336453931, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: m_Color.a
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6835528728336453931, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 6f04fcb409ef8d545910cb39eb7158a5, type: 2}
-    - target: {fileID: 6920420369625253751, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: duckCall
-      value: 
-      objectReference: {fileID: 8300000, guid: 1ba2dcdb7d886754daaf1b829651d51d, type: 3}
     - target: {fileID: 6920420369625253751, guid: d2baccc22104e694db501fa20041716c, type: 3}
       propertyPath: duckPrefab
       value: 
       objectReference: {fileID: 1512146767571641820, guid: d2baccc22104e694db501fa20041716c, type: 3}
-    - target: {fileID: 6920420369625253751, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: quackQuack
-      value: 
-      objectReference: {fileID: 8300000, guid: 1ba2dcdb7d886754daaf1b829651d51d, type: 3}
-    - target: {fileID: 6920420369625253751, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: maxBoundary.x
-      value: 35
-      objectReference: {fileID: 0}
-    - target: {fileID: 6920420369625253751, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: maxBoundary.y
-      value: 18
-      objectReference: {fileID: 0}
-    - target: {fileID: 6920420369625253751, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: minBoundary.x
-      value: -15
-      objectReference: {fileID: 0}
-    - target: {fileID: 6920420369625253751, guid: d2baccc22104e694db501fa20041716c, type: 3}
-      propertyPath: minBoundary.y
-      value: -16
-      objectReference: {fileID: 0}
     - target: {fileID: 6920420369625253751, guid: d2baccc22104e694db501fa20041716c, type: 3}
       propertyPath: parentTransform
       value: 

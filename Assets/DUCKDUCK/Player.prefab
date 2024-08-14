@@ -15,12 +15,12 @@ GameObject:
   - component: {fileID: 3014107141130622932}
   - component: {fileID: 6920420369625253751}
   - component: {fileID: 623830978591677838}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3679323302228033218
 Transform:
@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 1512146767571641820}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.7, y: -10.7, z: 0}
+  m_LocalPosition: {x: 7.8, y: 4.9, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 0ca6c64f913c91841aa6af939f96eb9e, type: 3}
+  m_Sprite: {fileID: -868639279, guid: 986e627c13abb0f43b6583b1228f5f1c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -118,14 +118,14 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0, y: 10.639999, z: 0, w: 13.83}
+    border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 30.004883, y: 50}
+    oldSize: {x: 16.752726, y: 18.12}
     newSize: {x: 30.004883, y: 50}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -195,13 +195,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  duckCall: {fileID: 8300000, guid: 4f3c49a0c63bfa84fa71cd31f599bf33, type: 3}
+  duckCall: {fileID: 8300000, guid: 1ba2dcdb7d886754daaf1b829651d51d, type: 3}
   quackQuack: {fileID: 8300000, guid: 1ba2dcdb7d886754daaf1b829651d51d, type: 3}
-  minBoundary: {x: -10, y: -13.565}
-  maxBoundary: {x: 10, y: 10}
+  minBoundary: {x: -15, y: -16}
+  maxBoundary: {x: 35, y: 18}
   duckPrefab: {fileID: 0}
   parentTransform: {fileID: 0}
   jumpForce: 6
+  rollSpeed: 20
+  isRolling: 0
   IsSitting: 0
   isDragging: 0
   isJumping: 0
@@ -227,7 +229,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 3.23354
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
