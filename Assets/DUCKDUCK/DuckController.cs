@@ -105,7 +105,7 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         }
 
         // Check for duck management mode toggle
-        if (Input.GetKeyDown(KeyCode.Equals))
+        if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             ToggleDuckManagement();
         }
@@ -113,7 +113,7 @@ public class DuckController : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         // Check for adding/removing ducks
         if (isManagingDucks)
         {
-            if ((Input.GetKeyDown(KeyCode.Plus) || Input.GetKeyDown(KeyCode.KeypadPlus)) && ducks.Count < maxDucks)
+            if ((Input.GetKeyDown(KeyCode.Equals) || Input.GetKeyDown(KeyCode.KeypadPlus)) && ducks.Count < maxDucks)
             {
                 AddDuck();
             }
