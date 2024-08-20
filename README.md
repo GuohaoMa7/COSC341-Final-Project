@@ -10,8 +10,3 @@
 <br>
 <br>
 
-### need fix
-<p>use voice to add duck has some problem, only can add one duck
-
-
-
